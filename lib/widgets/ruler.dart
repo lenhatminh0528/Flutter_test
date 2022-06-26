@@ -17,9 +17,6 @@ class RulerPickerController extends ValueNotifier<int> {
 
 typedef ValueChangedCallback = void Function(int value);
 
-/// RulerPicker 标尺选择器
-/// [width] 必须是具体的值，包括父级container的width，不能是 double.infinity，
-/// 可以传入MediaQuery.of(context).size.width
 class MyRulerPicker extends StatefulWidget {
   final int selectedValue;
   final ValueChangedCallback onValueChange;
