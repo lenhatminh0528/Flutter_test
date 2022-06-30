@@ -1,8 +1,10 @@
 import 'dart:ui';
 
 import 'package:biocare_flutter/screens/base_screen.dart';
+import 'package:biocare_flutter/widgets/custom/custom_ruler.dart';
 import 'package:biocare_flutter/widgets/ruler.dart';
 import 'package:flutter/material.dart';
+import 'package:biocare_flutter/widgets/custom/custom_ruler.dart';
 
 class SignInView extends BasePageScreen {
   static const routeName = "/signIn";
@@ -13,8 +15,6 @@ class SignInView extends BasePageScreen {
   State<SignInView> createState() => _SignInViewState();
 }
 
-enum rulerType { one, two }
-
 class _SignInViewState extends BasePageScreenState<SignInView> with BaseScreen {
   final TextEditingController _firstNameController = TextEditingController();
   RulerPickerController? _rulerPickerController;
@@ -23,6 +23,9 @@ class _SignInViewState extends BasePageScreenState<SignInView> with BaseScreen {
   int currentValue3 = 150;
   int currentValue4 = 50;
   String selectType = "height,inch";
+  RulerType rulerType1 = RulerType.height;
+  RulerType rulerType2 = RulerType.weight;
+  UnitType unitType = UnitType.imperial;
   @override
   void initState() {
     // isShowLogo(true);
@@ -39,6 +42,24 @@ class _SignInViewState extends BasePageScreenState<SignInView> with BaseScreen {
   @override
   void onClickBackButton() {
     // TODO: implement onClickBackButton
+  }
+
+  void onClickImperial() {
+    print("imetric");
+    if (unitType == UnitType.metric) {
+      setState(() {
+        unitType = UnitType.imperial;
+      });
+    }
+  }
+
+  void onClickMetric() {
+    print("metric");
+    if (unitType == UnitType.imperial) {
+      setState(() {
+        unitType = UnitType.metric;
+      });
+    }
   }
 
   @override
@@ -75,259 +96,268 @@ class _SignInViewState extends BasePageScreenState<SignInView> with BaseScreen {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       ElevatedButton(
-                          onPressed: () {}, child: Text("height,inch")),
-                      ElevatedButton(onPressed: () {}, child: Text("cm,kg"))
+                          onPressed: onClickImperial,
+                          child: Text("Imperial(ft,lb")),
+                      ElevatedButton(
+                          onPressed: onClickMetric,
+                          child: Text("Metric(cm,kg)"))
                     ],
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [Text("Height"), Text("feet, inch")],
-                  ),
-                  MyRulerPicker(
-                    width: MediaQuery.of(context).size.width - 32,
-                    height: 70,
-                    controller: _rulerPickerController!,
-                    beginValue: 0,
-                    endValue: 100,
-                    initValue: currentValue,
-                    scaleLineStyleList: const [
-                      ScaleLineStyle(
-                          color: Colors.black, width: 2, height: 24, scale: 0),
-                      ScaleLineStyle(
-                        color: Colors.black,
-                        width: 2,
-                        height: 12,
-                        scale: -1,
-                      ),
-                    ],
-                    onBuildRulerScalueText: (index, scaleValue) {
-                      return "${(scaleValue / 10).toInt()}'";
-                    },
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: const [Text("Height"), Text("feet, inch")],
+                  // ),
+                  CustomRuler(
+                    key: UniqueKey(),
                     onValueChange: (value) {
-                      setState(() {
-                        currentValue = value;
-                      });
+                      print("custom Value: $value");
                     },
+                    rulerType: RulerType.height,
+                    unitType: unitType,
+                  ),
+                  CustomRuler(
+                    key: UniqueKey(),
+                    onValueChange: (value) {
+                      print("custom Value: $value");
+                    },
+                    rulerType: RulerType.weight,
+                    unitType: unitType,
+                  ),
+                  // CustomRuler(
+                  //   onValueChange: (value) {
+                  //     print("custom Value: $value");
+                  //   },
+                  //   rulerType: RulerType.height,
+                  //   unitType: UnitType.metric,
+                  // ),
+                  // CustomRuler(
+                  //   onValueChange: (value) {
+                  //     print("custom Value: $value");
+                  //   },
+                  //   rulerType: RulerType.weight,
+                  //   unitType: UnitType.metric,
+                  // ),
+                  // MyRulerPicker(
+                  //   width: MediaQuery.of(context).size.width - 32,
+                  //   height: 70,
+                  //   controller: _rulerPickerController!,
+                  //   beginValue: 0,
+                  //   endValue: 100,
+                  //   initValue: currentValue,
+                  //   scaleLineStyleList: const [
+                  //     ScaleLineStyle(
+                  //         color: Colors.black, width: 2, height: 24, scale: 0),
+                  //     ScaleLineStyle(
+                  //       color: Colors.black,
+                  //       width: 2,
+                  //       height: 12,
+                  //       scale: -1,
+                  //     ),
+                  //   ],
+                  //   onBuildRulerScalueText: (index, scaleValue) {
+                  //     return "${(scaleValue / 10).toInt()}'";
+                  //   },
+                  //   onValueChange: (value) {
+                  //     setState(() {
+                  //       currentValue = value;
+                  //     });
+                  //   },
 
-                    // rulerMarginTop: 8,
-                    marker: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          // color: Colors.red,
-                          child: Text(
-                            "${(currentValue / 10).toInt().toString()}'${(currentValue % 10).toInt().toString()}''",
-                            style: Theme.of(context).textTheme.headline2,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        Container(
-                            width: 4,
-                            height: 30,
-                            decoration: BoxDecoration(
-                                color: const Color.fromRGBO(28, 186, 146, 1),
-                                borderRadius: BorderRadius.circular(5))),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  MyRulerPicker(
-                    controller: _rulerPickerController!,
-                    beginValue: 0,
-                    endValue: 3000,
-                    initValue: currentValue2,
-                    scaleLineStyleList: const [
-                      ScaleLineStyle(
-                          color: Color.fromARGB(255, 43, 26, 197),
-                          width: 2,
-                          height: 14,
-                          scale: 0),
-                      ScaleLineStyle(
-                          color: Color.fromARGB(255, 26, 226, 60),
-                          width: 2,
-                          height: 14,
-                          scale: 5),
-                      ScaleLineStyle(
-                          color: Color.fromARGB(255, 69, 47, 47),
-                          width: 2,
-                          height: 7,
-                          scale: -1)
-                    ],
-                    onBuildRulerScalueText: (index, scaleValue) {
-                      return "${(scaleValue / 10).toInt().toString()}";
-                    },
-                    onValueChange: (value) {
-                      setState(() {
-                        currentValue2 = value;
-                      });
-                    },
-                    width: MediaQuery.of(context).size.width - 32,
-                    height: 120,
-                    rulerMarginTop: 8,
-                    marker: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Container(
-                            // color: Colors.black,
-                            child: Text(
-                              "${(currentValue2 / 10).toString()}",
-                              style: Theme.of(context).textTheme.headline2,
-                            ),
-                            // child: BackdropFilter(
-                            //   filter:
-                            //       ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
-                            //   child: Text(
-                            //     currentValue2.toString(),
-                            //     style: Theme.of(context).textTheme.headline2,
-                            //   ),
-                            // ),
-                          ),
-                        ),
-                        ClipPath(
-                          clipper: TriangleClipper(),
-                          child: Container(
-                            color: const Color.fromRGBO(28, 186, 146, 1),
-                            height: 22,
-                            width: 9,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  MyRulerPicker(
-                    controller: _rulerPickerController!,
-                    beginValue: 0,
-                    endValue: 600,
-                    initValue: currentValue,
-                    scaleLineStyleList: const [
-                      ScaleLineStyle(
-                          color: Color.fromARGB(255, 43, 26, 197),
-                          width: 2,
-                          height: 14,
-                          scale: 0),
-                      ScaleLineStyle(
-                          color: Color.fromARGB(255, 26, 226, 60),
-                          width: 2,
-                          height: 14,
-                          scale: 5),
-                      ScaleLineStyle(
-                          color: Color.fromARGB(255, 69, 47, 47),
-                          width: 2,
-                          height: 7,
-                          scale: -1)
-                    ],
-                    onBuildRulerScalueText: (index, scaleValue) {
-                      return "${scaleValue.toString()}";
-                    },
-                    onValueChange: (value) {
-                      setState(() {
-                        currentValue3 = value;
-                      });
-                    },
-                    width: MediaQuery.of(context).size.width - 32,
-                    height: 120,
-                    rulerMarginTop: 8,
-                    marker: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Container(
-                            // color: Colors.black,
-                            child: Text(
-                              "${currentValue3.toString()}",
-                              style: Theme.of(context).textTheme.headline2,
-                            ),
-                            // child: BackdropFilter(
-                            //   filter:
-                            //       ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
-                            //   child: Text(
-                            //     currentValue2.toString(),
-                            //     style: Theme.of(context).textTheme.headline2,
-                            //   ),
-                            // ),
-                          ),
-                        ),
-                        ClipPath(
-                          clipper: TriangleClipper(),
-                          child: Container(
-                            color: const Color.fromRGBO(28, 186, 146, 1),
-                            height: 22,
-                            width: 9,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  MyRulerPicker(
-                    controller: _rulerPickerController!,
-                    beginValue: 0,
-                    endValue: 200,
-                    initValue: currentValue4,
-                    scaleLineStyleList: const [
-                      ScaleLineStyle(
-                          color: Color.fromARGB(255, 43, 26, 197),
-                          width: 2,
-                          height: 14,
-                          scale: 0),
-                      ScaleLineStyle(
-                          color: Color.fromARGB(255, 26, 226, 60),
-                          width: 2,
-                          height: 14,
-                          scale: 5),
-                      ScaleLineStyle(
-                          color: Color.fromARGB(255, 69, 47, 47),
-                          width: 2,
-                          height: 7,
-                          scale: -1)
-                    ],
-                    onBuildRulerScalueText: (index, scaleValue) {
-                      return "${scaleValue.toString()}";
-                    },
-                    onValueChange: (value) {
-                      setState(() {
-                        currentValue4 = value;
-                      });
-                    },
-                    width: MediaQuery.of(context).size.width - 32,
-                    height: 120,
-                    rulerMarginTop: 8,
-                    marker: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Container(
-                            // color: Colors.black,
-                            child: Text(
-                              "${currentValue4.toString()}",
-                              style: Theme.of(context).textTheme.headline2,
-                            ),
-                            // child: BackdropFilter(
-                            //   filter:
-                            //       ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
-                            //   child: Text(
-                            //     currentValue2.toString(),
-                            //     style: Theme.of(context).textTheme.headline2,
-                            //   ),
-                            // ),
-                          ),
-                        ),
-                        ClipPath(
-                          clipper: TriangleClipper(),
-                          child: Container(
-                            color: const Color.fromRGBO(28, 186, 146, 1),
-                            height: 22,
-                            width: 9,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  //   // rulerMarginTop: 8,
+                  //   marker: Column(
+                  //     mainAxisAlignment: MainAxisAlignment.end,
+                  //     children: [
+                  //       Container(
+                  //         // color: Colors.red,
+                  //         child: Text(
+                  //           "${(currentValue / 10).toInt().toString()}'${(currentValue % 10).toInt().toString()}''",
+                  //           style: Theme.of(context).textTheme.headline2,
+                  //         ),
+                  //       ),
+                  //       const SizedBox(
+                  //         height: 4,
+                  //       ),
+                  //       Container(
+                  //           width: 4,
+                  //           height: 30,
+                  //           decoration: BoxDecoration(
+                  //               color: const Color.fromRGBO(28, 186, 146, 1),
+                  //               borderRadius: BorderRadius.circular(5))),
+                  //     ],
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 10),
+                  // MyRulerPicker(
+                  //   controller: _rulerPickerController!,
+                  //   beginValue: 0,
+                  //   endValue: 3000,
+                  //   initValue: currentValue2,
+                  //   scaleLineStyleList: const [
+                  //     ScaleLineStyle(
+                  //         color: Color.fromARGB(255, 43, 26, 197),
+                  //         width: 2,
+                  //         height: 14,
+                  //         scale: 0),
+                  //     ScaleLineStyle(
+                  //         color: Color.fromARGB(255, 26, 226, 60),
+                  //         width: 2,
+                  //         height: 14,
+                  //         scale: 5),
+                  //     ScaleLineStyle(
+                  //         color: Color.fromARGB(255, 69, 47, 47),
+                  //         width: 2,
+                  //         height: 7,
+                  //         scale: -1)
+                  //   ],
+                  //   onBuildRulerScalueText: (index, scaleValue) {
+                  //     return "${(scaleValue / 10).toInt().toString()}";
+                  //   },
+                  //   onValueChange: (value) {
+                  //     setState(() {
+                  //       currentValue2 = value;
+                  //     });
+                  //   },
+                  //   width: MediaQuery.of(context).size.width - 32,
+                  //   height: 120,
+                  //   rulerMarginTop: 8,
+                  //   marker: Column(
+                  //     mainAxisAlignment: MainAxisAlignment.end,
+                  //     children: [
+                  //       Padding(
+                  //         padding: const EdgeInsets.all(10),
+                  //         child: Container(
+                  //           // color: Colors.black,
+                  //           child: Text(
+                  //             "${(currentValue2 / 10).toString()}",
+                  //             style: Theme.of(context).textTheme.headline2,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       ClipPath(
+                  //         clipper: TriangleClipper(),
+                  //         child: Container(
+                  //           color: const Color.fromRGBO(28, 186, 146, 1),
+                  //           height: 22,
+                  //           width: 9,
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+                  // MyRulerPicker(
+                  //   controller: _rulerPickerController!,
+                  //   beginValue: 0,
+                  //   endValue: 600,
+                  //   initValue: currentValue3,
+                  //   scaleLineStyleList: const [
+                  //     ScaleLineStyle(
+                  //         color: Color.fromARGB(255, 43, 26, 197),
+                  //         width: 2,
+                  //         height: 14,
+                  //         scale: 0),
+                  //     ScaleLineStyle(
+                  //         color: Color.fromARGB(255, 26, 226, 60),
+                  //         width: 2,
+                  //         height: 14,
+                  //         scale: 5),
+                  //     ScaleLineStyle(
+                  //         color: Color.fromARGB(255, 69, 47, 47),
+                  //         width: 2,
+                  //         height: 7,
+                  //         scale: -1)
+                  //   ],
+                  //   onBuildRulerScalueText: (index, scaleValue) {
+                  //     return "${scaleValue.toString()}";
+                  //   },
+                  //   onValueChange: (value) {
+                  //     setState(() {
+                  //       currentValue3 = value;
+                  //     });
+                  //   },
+                  //   width: MediaQuery.of(context).size.width - 32,
+                  //   height: 120,
+                  //   rulerMarginTop: 8,
+                  //   marker: Column(
+                  //     mainAxisAlignment: MainAxisAlignment.end,
+                  //     children: [
+                  //       Padding(
+                  //         padding: const EdgeInsets.all(10),
+                  //         child: Container(
+                  //           // color: Colors.black,
+                  //           child: Text(
+                  //             "${currentValue3.toString()}",
+                  //             style: Theme.of(context).textTheme.headline2,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       ClipPath(
+                  //         clipper: TriangleClipper(),
+                  //         child: Container(
+                  //           color: const Color.fromRGBO(28, 186, 146, 1),
+                  //           height: 22,
+                  //           width: 9,
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+                  // MyRulerPicker(
+                  //   controller: _rulerPickerController!,
+                  //   beginValue: 0,
+                  //   endValue: 200,
+                  //   initValue: currentValue4,
+                  //   scaleLineStyleList: const [
+                  //     ScaleLineStyle(
+                  //         color: Color.fromARGB(255, 43, 26, 197),
+                  //         width: 2,
+                  //         height: 14,
+                  //         scale: 0),
+                  //     ScaleLineStyle(
+                  //         color: Color.fromARGB(255, 26, 226, 60),
+                  //         width: 2,
+                  //         height: 14,
+                  //         scale: 5),
+                  //     ScaleLineStyle(
+                  //         color: Color.fromARGB(255, 69, 47, 47),
+                  //         width: 2,
+                  //         height: 7,
+                  //         scale: -1)
+                  //   ],
+                  //   onBuildRulerScalueText: (index, scaleValue) {
+                  //     return "${scaleValue.toString()}";
+                  //   },
+                  //   onValueChange: (value) {
+                  //     setState(() {
+                  //       currentValue4 = value;
+                  //     });
+                  //   },
+                  //   width: MediaQuery.of(context).size.width - 32,
+                  //   height: 120,
+                  //   rulerMarginTop: 8,
+                  //   marker: Column(
+                  //     mainAxisAlignment: MainAxisAlignment.end,
+                  //     children: [
+                  //       Padding(
+                  //         padding: const EdgeInsets.all(10),
+                  //         child: Container(
+                  //           // color: Colors.black,
+                  //           child: Text(
+                  //             "${currentValue4.toString()}",
+                  //             style: Theme.of(context).textTheme.headline2,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       ClipPath(
+                  //         clipper: TriangleClipper(),
+                  //         child: Container(
+                  //           color: const Color.fromRGBO(28, 186, 146, 1),
+                  //           height: 22,
+                  //           width: 9,
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                   const SizedBox(
                     height: 10,
                   ),
