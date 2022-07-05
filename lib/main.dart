@@ -1,7 +1,7 @@
 import 'package:biocare_flutter/constant/Colors.dart';
 import 'package:biocare_flutter/screens/baseRulerScreen.dart';
 import 'package:biocare_flutter/screens/sign_in.dart';
-import 'package:biocare_flutter/widgets/pinCodeScrene/pinCode.dart';
+import 'package:biocare_flutter/widgets/pinCodeScrene/pinCodeScreen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -52,6 +52,7 @@ class MyApp extends StatelessWidget {
         SignInView.routeName: (ctx) => const SignInView(),
         BaseRulerScreen.routeName: (ctx) => const BaseRulerScreen(),
         PinCodeScreen.routeName: ((ctx) => const PinCodeScreen()),
+        // HealthApp.routeName: (context) => HealthApp(),
       },
     );
   }
